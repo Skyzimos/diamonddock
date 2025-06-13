@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DiamondDock - Organization with Ease</title>
@@ -10,6 +11,7 @@
       background: #000;
       color: #222;
     }
+
     #searchContainer {
       padding: 10px 15px;
       background: #111;
@@ -17,6 +19,7 @@
       color: white;
       user-select: none;
     }
+
     #searchBtn {
       background: #0078d7;
       border: none;
@@ -28,6 +31,7 @@
       user-select: none;
       transition: background 0.3s ease;
     }
+
     #searchBtn:hover {
       background: #005fa3;
     }
@@ -80,7 +84,8 @@
       user-select: none;
     }
 
-    #boxLabelDisplay, #boxLabelInput {
+    #boxLabelDisplay,
+    #boxLabelInput {
       font-size: 5.6rem;
       font-weight: 800;
       text-align: center;
@@ -106,8 +111,9 @@
     }
   </style>
 </head>
+
 <body>
-  
+
   <div id="searchContainer">
     <button id="searchBtn">Find Box by Label</button>
   </div>
@@ -255,26 +261,31 @@
       if (!pattern) return;
 
       try {
-        // Fetch all labels for this project
+        // Pause scanning during search to avoid conflicts
+        scanning = false;
+
         const res = await fetch(`${API_URL}?projectID=${projectID}`);
         const data = await res.json();
 
-        // Find first matching label that fits the pattern
         const found = data.find(row => matchesPattern(row[2], pattern));
 
         if (found) {
           const boxNum = parseInt(found[1]);
           const pos = getRowAndBoxPosition(boxNum);
-          alert(`Label "${found[2]}" found at: ${pos.row} row, ${pos.boxInRow} box (Box ID: B${boxNum.toString().padStart(3,'0')})`);
+          alert(`Label "${found[2]}" found at: ${pos.row} row, ${pos.boxInRow} box (Box ID: B${boxNum.toString().padStart(3, '0')})`);
         } else {
           alert("No matching box found.");
         }
+
       } catch (err) {
         alert("Error searching labels.");
         console.error(err);
+      } finally {
+        // Resume scanning after search is done
+        scanning = true;
       }
     });
-
   </script>
 </body>
+
 </html>
