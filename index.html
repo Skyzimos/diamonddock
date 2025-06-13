@@ -232,7 +232,13 @@
     window.onload = () => {
       qrReader.start(
         { facingMode: "environment" },
-        { fps: 5, qrbox: { width: 100, height: 50 } },
+        {
+          fps: 10, // You can raise FPS for better performance
+          qrbox: (viewfinderWidth, viewfinderHeight) => {
+            const size = Math.min(viewfinderWidth, viewfinderHeight, 200);
+            return { width: size, height: size };
+          }
+        },
         onScanSuccess
       ).catch(console.error);
     };
