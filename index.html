@@ -181,10 +181,8 @@
 
     labelInput.addEventListener("blur", () => {
       const newLabel = labelInput.value.trim();
-      if (newLabel !== labelDisplay.textContent) {
-        labelDisplay.textContent = newLabel || "Tap to add label";
-        saveLabel(newLabel);
-      }
+      labelDisplay.textContent = newLabel || "Tap to add label";
+      saveLabel(newLabel);
       labelInput.style.display = "none";
       labelDisplay.style.display = "block";
     });
