@@ -172,25 +172,6 @@
       }
     }
 
-    // Label Editing
-    labelDisplay.addEventListener("click", () => {
-      labelDisplay.style.display = "none";
-      labelInput.style.display = "block";
-      labelInput.focus();
-    });
-
-    labelInput.addEventListener("blur", () => {
-      const newLabel = labelInput.value.trim();
-      labelDisplay.textContent = newLabel || "Tap to add label";
-      saveLabel(newLabel);
-      labelInput.style.display = "none";
-      labelDisplay.style.display = "block";
-    });
-
-    labelInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") labelInput.blur();
-    });
-
     async function saveLabel(labelText) {
       const boxNumber = parseInt(currentBoxID.replace(/\D/g, ''));
       const payload = {
@@ -211,6 +192,25 @@
         console.error("Failed to save label", err);
       }
     }
+
+    // Label Editing
+    labelDisplay.addEventListener("click", () => {
+      labelDisplay.style.display = "none";
+      labelInput.style.display = "block";
+      labelInput.focus();
+    });
+
+    labelInput.addEventListener("blur", async () => {
+      const newLabel = labelInput.value.trim();
+      labelDisplay.textContent = newLabel || "Tap to add label";
+      await saveLabel(newLabel);
+      labelInput.style.display = "none";
+      labelDisplay.style.display = "block";
+    });
+
+    labelInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") labelInput.blur();
+    });
 
     // Modal swipe to close
     let startY = null;
