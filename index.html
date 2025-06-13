@@ -10,6 +10,28 @@
       background: #000;
       color: #222;
     }
+    #searchContainer {
+      padding: 10px 15px;
+      background: #111;
+      text-align: center;
+      color: white;
+      user-select: none;
+    }
+    #searchBtn {
+      background: #0078d7;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      font-size: 1.1rem;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.3s ease;
+    }
+    #searchBtn:hover {
+      background: #005fa3;
+    }
+
     #qr-reader {
       width: 100vw;
       height: 100vh;
@@ -85,6 +107,11 @@
   </style>
 </head>
 <body>
+  
+  <div id="searchContainer">
+    <button id="searchBtn">Find Box by Label</button>
+  </div>
+
   <div id="qr-reader"></div>
 
   <!-- Modal -->
@@ -205,6 +232,49 @@
         onScanSuccess
       ).catch(console.error);
     };
+
+    // --- New Search Feature ---
+
+    const totalBoxes = 28;
+    const boxesPerRow = 4;
+
+    function getRowAndBoxPosition(boxNum) {
+      const row = Math.ceil(boxNum / boxesPerRow);
+      const boxInRow = ((boxNum - 1) % boxesPerRow) + 1;
+      return { row, boxInRow };
+    }
+
+    function matchesPattern(label, pattern) {
+      if (!pattern.includes('*')) return label === pattern.toUpperCase();
+      const prefix = pattern.split('*')[0].toUpperCase();
+      return label.startsWith(prefix);
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', async () => {
+      const pattern = prompt("Enter label to find (use * as wildcard, e.g. A*):");
+      if (!pattern) return;
+
+      try {
+        // Fetch all labels for this project
+        const res = await fetch(`${API_URL}?projectID=${projectID}`);
+        const data = await res.json();
+
+        // Find first matching label that fits the pattern
+        const found = data.find(row => matchesPattern(row[2], pattern));
+
+        if (found) {
+          const boxNum = parseInt(found[1]);
+          const pos = getRowAndBoxPosition(boxNum);
+          alert(`Label "${found[2]}" found at: ${pos.row} row, ${pos.boxInRow} box (Box ID: B${boxNum.toString().padStart(3,'0')})`);
+        } else {
+          alert("No matching box found.");
+        }
+      } catch (err) {
+        alert("Error searching labels.");
+        console.error(err);
+      }
+    });
+
   </script>
 </body>
 </html>
